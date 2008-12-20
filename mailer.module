@@ -1,0 +1,119 @@
+<?php
+
+// MODULE HOOKS ///////////////////////
+
+/**
+ * Display help and module information
+ * @param path path to display help
+ * @param arg array that holds current path
+ * @return help text
+ */
+function mailer_help($path, $arg) {
+  $output = "";
+  switch ($path) {
+    case "admin/help#mailer":
+      $output = '<p>'. t("Send email using SMTP libraries.") .'</p>';
+      break;
+    case "admin/settings/mailer":
+      $output = '<p>'. t("Select a library for sending email.") .'</p>';
+      break;
+  }
+  return $output;
+}
+
+/**
+ * Describe permissions for this module
+ * @return array an array of valid permissions
+ */
+function mailer_perm() {
+  return array('administer mailer');
+}
+
+function mailer_theme() {
+  return array(
+    'mailer_admin_overview' => array(
+      'arguments' => NULL,
+      'file' => 'mailer.admin.inc',
+    ),
+  );
+}
+
+function mailer_menu() {
+  return array(
+    'admin/settings/mailer' => array(
+      'title' => 'Mailers',
+      'description' => 'Configure how to send email.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('mailer_admin_overview'),
+      'access arguments' => array('administer mailer'),
+      'file' => 'mailer.admin.inc',
+    ),
+    'admin/settings/mailer/%mailer' => array(
+      'type' => MENU_CALLBACK,
+      'title callback' => 'mailer_admin_title',
+      'title arguments' => array(3),
+      'page callback' => 'mailer_admin_configure_page',
+      'page arguments' => array(3),
+      'access arguments' => array('administer mailer'),
+      'file' => 'mailer.admin.inc',
+    ),
+    'admin/settings/mailer/%mailer/configure' => array(
+      'title' => 'Configure',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'weight' => 0,
+      'file' => 'mailer.admin.inc',
+    ),
+    'admin/settings/mailer/%mailer/test' => array(
+      'title' => 'Test email',
+      'type' => MENU_LOCAL_TASK,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('mailer_admin_test', 3),
+      'access arguments' => array('administer mailer'),
+      'weight' => 1,
+      'file' => 'mailer.admin.inc',
+    ),
+    'admin/settings/mailer/reset' => array(
+      'type' => MENU_CALLBACK,
+      'title' => 'Reset configuration',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('mailer_admin_reset'),
+      'access arguments' => array('administer mailer'),
+      'file' => 'mailer.admin.inc',
+    ),
+  );
+}
+
+function mailer_load($arg) {
+  $mailers = _mailer_get_mailers();
+  foreach ($mailers as $mailer) {
+    if ($mailer->name == $arg) {
+      return $mailer; 
+    }
+  }
+  return FALSE;
+}
+
+function mailer_admin_configure_page($mailer) {
+  require_once($mailer->filename);
+  return drupal_get_form('mailer_admin_configure');
+}
+
+function mailer_admin_title($mailer) {
+  return $mailer->name;
+}
+
+function mailer_mail($key, &$message, $params) {
+  $language = $message['language'];
+  switch ($key) {
+  case 'test':
+    $message['subject'] = t('Test email from !mailer.', $params, $language->language);
+    $message['body'] = t('Looks like it works.', $params, $language->language);
+    break;
+  }
+}
+
+// HELPER ///////////////////////
+
+function _mailer_get_mailers() {
+  return drupal_system_listing('\.inc', 'modules/mailer');
+}

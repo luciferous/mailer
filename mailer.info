@@ -1,0 +1,4 @@
+; $Id$
+name = Mailer
+description = "A wrapper for SMTP clients."
+core = 6.x
