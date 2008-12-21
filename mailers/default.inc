@@ -1,5 +1,14 @@
 <?php
+// $Id$
 
+/**
+ * @file
+ * Used by the Mailer module to send mail via mail() function.
+ */
+
+/**
+ * Send an e-mail message using mail().
+ */
 function drupal_mail_wrapper($message) {
   $mimeheaders = array();
   foreach ($message['headers'] as $name => $value) {
@@ -17,11 +26,18 @@ function drupal_mail_wrapper($message) {
   );
 }
 
+/**
+ * A form allowing Mailer to provide driver-specific configuration.
+ */
 function mailer_admin_configure() {
   drupal_set_message('Nothing to configure for the default mailer.');
   drupal_goto('admin/settings/mailer');
 }
 
+/**
+ * Resets or deletes any configuration saved to the database by this
+ * driver. 
+ */
 function mailer_reset_configuration() {
   variable_set('smtp_library', '');
 }

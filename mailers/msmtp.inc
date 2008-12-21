@@ -1,4 +1,10 @@
 <?php
+// $Id$
+
+/**
+ * @file
+ * Driver for sending mail using msmtp.
+ */
 
 function drupal_mail_wrapper($message) {
   $mailer = _msmtp_get_mailer();

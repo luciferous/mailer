@@ -1,4 +1,10 @@
 <?php
+// $Id$
+
+/**
+ * @file
+ * Functions for administration of the Mailer module.
+ */
 
 /**
  * Theme the mailer list form.
@@ -110,8 +116,7 @@ function mailer_admin_test($form, $mailer) {
 }
 
 function mailer_admin_test_submit($form, &$form_state) {
-  if (drupal_mail('mailer', 'test', $form_state['values']['email'], language_default(), array('!mailer' => $form_state['values']['mailer'])))
-  {
+  if (drupal_mail('mailer', 'test', $form_state['values']['email'], language_default(), array('!mailer' => $form_state['values']['mailer']))) {
     drupal_set_message(t('Sent a test email to %email.', array('%email' => $form_state['values']['email'])));
   }
   else {
