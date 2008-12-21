@@ -35,9 +35,9 @@ function drupal_mail_wrapper($message) {
 }
 
 function _msmtp_get_mailer() {
-  $command = variable_get('msmtp_bin');
-  $config = variable_get('msmtp_rc');
-  $account = variable_get('msmtp_account');
+  $command = variable_get('msmtp_bin', '');
+  $config = variable_get('msmtp_rc', '');
+  $account = variable_get('msmtp_account', '');
 
   if (empty($command)
     || empty($config)
